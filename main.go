@@ -11,9 +11,9 @@ import (
 )
 
 const (
-	PAGEACCESS_TOKEN="get page access token from fb page"
-	VERIFY_TOKEN ="string of password"
-	PORT =4040
+	PAGEACCESS_TOKEN="EAAZA8vTvPfkcBANRZC3JKnHGXS4Ic8oZAFkQheEbeshbZB7y6YG80SGTRw2haVbxRDRWjerVAWeJ6PbLVrbsfro349Tgsl7rARUZBhZAq68FPJ3n7ZCZA4QZCHZCYEwhhQGLdFUmBwQFlwJenFVlUnlrp009njtWtHoTP1xBKsreOeE3GSigbTJuM0"
+	VERIFY_TOKEN ="ratbimat"
+	PORT =8080
 )
 type Warning struct{
 	
@@ -37,11 +37,23 @@ func(warning Warning) HandleMessage(bot *fbbot.Bot, msg *fbbot.Message)  {
 	user_url:=msg.Text
 	ok:= isValidUrl(user_url)
 	if !ok {
-		reply:="Moi ban gui cho toi duong link can kiem tra/n Luu y la chi duong link"
+		chaohoi:="xin chao " + msg.Sender.FullName()+", rất vui khi được đồng hành cùng bạn"
+		m0:=fbbot.NewTextMessage(chaohoi)
+		bot.Send(msg.Sender,m0)
+		gioithieu:="Tên mình là neitteiv"
+		m01:=fbbot.NewTextMessage(gioithieu)
+		bot.Send(msg.Sender,m01)
+
+		reply:="Khi nghi ngờ đường link của bạn nguy hiểm, hãy gửi nó cho tôi"
 		m:=fbbot.NewTextMessage(reply)
 		bot.Send(msg.Sender,m)
+
+
+		reply1:="Hãy nhập đường link và gửi nó cho tôi: "
+		m2:=fbbot.NewTextMessage(reply1)
+		bot.Send(msg.Sender,m2)
+
 	} else{
-		fmt.Println(user_url)
 		req, err := http.NewRequest("GET", "http://api.openfpt.vn/cyradar?url="+user_url,nil)
 		if err!=nil {
 			fmt.Sprint("tao request hong")
@@ -78,13 +90,19 @@ func(warning Warning) HandleMessage(bot *fbbot.Bot, msg *fbbot.Message)  {
 		var reply string
 		switch data.Conclusion {
 		case "danger":
-			reply="nguy hiem"
+			reply="warning: đường link NGUY HIỂM, bạn hãy cân nhắc trước khi click vào"
 		default:
-			reply="an toan"
+			reply="đường link AN TOÀN, bạn hãy yên tâm truy nhập"
+
 		}
 
 		m:=fbbot.NewTextMessage(reply)
 		bot.Send(msg.Sender,m)
+
+		tambiet:="Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi"
+		m0:=fbbot.NewTextMessage(tambiet)
+		bot.Send(msg.Sender,m0)
+
 	}
 }
 
