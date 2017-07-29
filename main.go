@@ -8,16 +8,22 @@ import (
 	"encoding/json"
 	"log"
 	"net/url"
+	"strings"
 )
 
 const (
-	PAGEACCESS_TOKEN="EAAZA8vTvPfkcBANRZC3JKnHGXS4Ic8oZAFkQheEbeshbZB7y6YG80SGTRw2haVbxRDRWjerVAWeJ6PbLVrbsfro349Tgsl7rARUZBhZAq68FPJ3n7ZCZA4QZCHZCYEwhhQGLdFUmBwQFlwJenFVlUnlrp009njtWtHoTP1xBKsreOeE3GSigbTJuM0"
-	VERIFY_TOKEN ="ratbimat"
+	PAGEACCESS_TOKEN="EAAEo7uCJDOEBACAoHAQX9wIlr6TnkuspGU73hAG5eHZAZAKDs6CrI4uoX6fApDILuSYDRWLHEJAcMJPkrfB8KuLqOx5XihlsYgc8zptk8IZCJDXkrz51f21WVABJuCrbZAu1i4cHd2PbHmntHF3gqEv00gixkfUHpICoCcdpBSsSfssnZBNWM"
+	VERIFY_TOKEN ="ratbimat123"
 	PORT =8080
 )
 type Warning struct{
 	
 }
+
+type tennguoidung string
+type solansudung int
+
+var xuathien= make(map[tennguoidung]solansudung)
 
 func main()  {
 	var warning Warning
@@ -34,26 +40,35 @@ func main()  {
 func(warning Warning) HandleMessage(bot *fbbot.Bot, msg *fbbot.Message)  {
 
 	//khoi tao request
-	user_url:=msg.Text
-	ok:= isValidUrl(user_url)
-	if !ok {
-		chaohoi:="xin chao " + msg.Sender.FullName()+", rất vui khi được đồng hành cùng bạn"
-		m0:=fbbot.NewTextMessage(chaohoi)
-		bot.Send(msg.Sender,m0)
-		gioithieu:="Tên mình là neitteiv"
-		m01:=fbbot.NewTextMessage(gioithieu)
-		bot.Send(msg.Sender,m01)
 
-		reply:="Khi nghi ngờ đường link của bạn nguy hiểm, hãy gửi nó cho tôi"
-		m:=fbbot.NewTextMessage(reply)
-		bot.Send(msg.Sender,m)
+	if isFirstUsing(string(msg.Sender.FullName())) {
+		xuathien[tennguoidung(msg.Sender.FullName())]=0
 
 
-		reply1:="Hãy nhập đường link và gửi nó cho tôi: "
-		m2:=fbbot.NewTextMessage(reply1)
+		chaohoi1:="xin chao " + msg.Sender.FullName()+", rất vui khi được đồng hành cùng bạn"
+		m1:=fbbot.NewTextMessage(chaohoi1)
+		bot.Send(msg.Sender,m1)
+		chaohoi2:="Tên mình là neitteiv"
+		m2:=fbbot.NewTextMessage(chaohoi2)
 		bot.Send(msg.Sender,m2)
 
-	} else{
+		chaohoi3:="Khi nghi ngờ đường link của bạn nguy hiểm, hãy gửi nó cho tôi"
+		m3:=fbbot.NewTextMessage(chaohoi3)
+		bot.Send(msg.Sender,m3)
+
+
+		chaohoi4:="Hãy nhập đường link và gửi nó cho tôi: "
+		m4:=fbbot.NewTextMessage(chaohoi4)
+		bot.Send(msg.Sender,m4)
+	}else {
+		fmt.Println("Hãy nhập đường link và gửi nó cho tôi")
+	}
+		messenger:=msg.Text
+		//tach lay url
+		user_url:=checkStringHasurl(messenger)
+
+
+		if strings.Compare(user_url,"")!=0 {//NEU TIN NHAN GUI DEN CO CHUA DUONG LINK
 		req, err := http.NewRequest("GET", "http://api.openfpt.vn/cyradar?url="+user_url,nil)
 		if err!=nil {
 			fmt.Sprint("tao request hong")
@@ -102,7 +117,6 @@ func(warning Warning) HandleMessage(bot *fbbot.Bot, msg *fbbot.Message)  {
 		tambiet:="Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi"
 		m0:=fbbot.NewTextMessage(tambiet)
 		bot.Send(msg.Sender,m0)
-
 	}
 }
 
@@ -121,4 +135,24 @@ func isValidUrl(toTest string) bool {
 	} else {
 		return true
 	}
+}
+
+func checkStringHasurl(str string ) string {
+	slice := strings.Fields(str)
+	for _, val := range slice {
+		if isValidUrl(val) {
+			return val
+		}
+	}
+	return ""
+
+}
+func isFirstUsing(tennguoidung string) bool {
+	for value,_:=range xuathien{
+		if strings.Compare(string(value),tennguoidung)==0 {
+			return false
+		}
+
+	}
+	return true
 }
