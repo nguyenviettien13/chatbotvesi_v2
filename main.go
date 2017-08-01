@@ -12,12 +12,12 @@ import (
 )
 
 const (
-	PAGEACCESS_TOKEN="EAAZA8vTvPfkcBAJyhSj5KrpEBm9VNH6NkVsOHZAUuhCkkSJ82JtZC6qaUK4NXctks9vC0ulojVc6DyQQCGw5yaPGTBss3iFj2uMfqJDnfbPePB63B0q3dS8oCeEvbD6kZAn42IYKyqZBIKyzmYpYZBYnM845c9xZAyCEppQ1a175tq9YmmzXZA5h"
-	VERIFY_TOKEN ="1234ratbimat"
+	PAGEACCESS_TOKEN=""
+	VERIFY_TOKEN =""
 	PORT =8080
 )
 type Warning struct{
-	
+
 }
 
 type tennguoidung string
@@ -27,10 +27,10 @@ var xuathien= make(map[tennguoidung]solansudung)
 
 func main()  {
 	var warning Warning
-	
+
 	//init a bot
 	bot:=fbbot.New(PORT,VERIFY_TOKEN,PAGEACCESS_TOKEN)
-	
+
 	//bot call AddMessageHandle
 	bot.AddMessageHandler(warning)
 	bot.Run()
